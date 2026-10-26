@@ -1,3 +1,4 @@
+
 from flask import Flask, request, render_template_string
 
 app = Flask(__name__)
@@ -7,7 +8,8 @@ HTML = """
 <html lang="om">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
     <title>Karoora Mana Dhuunfaa</title>
     <style>
         body {
@@ -23,9 +25,14 @@ HTML = """
             padding: 22px;
             border-radius: 12px;
         }
-        h1 { color: #166534; text-align: center; }
-
-label { display: block; margin-top: 14px; }
+        h1 {
+            color: #166534;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 14px;
+        }
         input {
             width: 100%;
             box-sizing: border-box;
@@ -37,7 +44,7 @@ label { display: block; margin-top: 14px; }
             padding: 12px;
             margin-top: 18px;
             background: #166534;
-color: white;
+            color: white;
             border: none;
             border-radius: 6px;
         }
@@ -52,25 +59,25 @@ color: white;
 <body>
 <div class="container">
     <h1>Karoora Mana Dhuunfaa</h1>
-    <p>Odeeffannoo baajata mana ijaaruuf barbaachisu galchi.</p>
+    <p>Odeeffannoo baajata mana ijaaruuf galchi.</p>
 
     <form method="POST">
         <label>Maqaa Abbaa Manaa</label>
         <input name="maqaa" required>
 
-        <label>Baajata waliigalaa (Birrii)</label>
+        <label>Baajata Waliigalaa (Birrii)</label>
         <input type="number" name="baajata"
                min="0" step="0.01" required>
 
-        <label>Baasii meeshaalee ijaarsaa (Birrii)</label>
+        <label>Baasii Meeshaalee Ijaarsaa (Birrii)</label>
         <input type="number" name="meeshaa"
-min="0" step="0.01" required>
+               min="0" step="0.01" required>
 
-        <label>Baasii hojjettootaa (Birrii)</label>
+        <label>Baasii Hojjettootaa (Birrii)</label>
         <input type="number" name="hojjetaa"
                min="0" step="0.01" required>
 
-        <label>Baasii biroo (Birrii)</label>
+        <label>Baasii Biroo (Birrii)</label>
         <input type="number" name="biroo"
                min="0" step="0.01" value="0" required>
 
@@ -81,15 +88,21 @@ min="0" step="0.01" required>
     <div class="result">
         <h3>Bu'aa Karooraa</h3>
         <p><b>Maqaa:</b> {{ buaan.maqaa }}</p>
-        <p><b>Baajata waliigalaa:</b>
-        {{ "%.2f"|format(buaan.baajata) }}
-Birrii</p>
-        <p><b>Maallaqa hafe:</b>
+        <p><b>Baajata:</b>
+        {{ "%.2f"|format(buaan.baajata) }} Birrii</p>
+        <p><b>Baasii Waliigalaa:</b>
+        {{ "%.2f"|format(buaan.baasii) }} Birrii</p>
+        <p><b>Maallaqa Hafe:</b>
         {{ "%.2f"|format(buaan.hafe) }} Birrii</p>
+
         {% if buaan.hafe < 0 %}
-        <p style="color:red">Hubachiisa: Baasiin baajata caaleera.</p>
+        <p style="color:red">
+            Hubachiisa: Baasiin baajata caaleera.
+        </p>
         {% else %}
-        <p style="color:green">Baajanni kee baasii galchite ni danda'a.</p>
+        <p style="color:green">
+            Baajanni kee baasii galchite ni danda'a.
+        </p>
         {% endif %}
     </div>
     {% endif %}
@@ -98,6 +111,7 @@ Birrii</p>
 </html>
 """
 
+
 @app.route("/", methods=["GET", "POST"])
 def karoora():
     buaan = None
@@ -105,14 +119,14 @@ def karoora():
     if request.method == "POST":
         try:
             maqaa = request.form["maqaa"].strip()
-baajata = float(request.form["baajata"])
+            baajata = float(request.form["baajata"])
             meeshaa = float(request.form["meeshaa"])
             hojjetaa = float(request.form["hojjetaa"])
             biroo = float(request.form["biroo"])
 
-            if (not maqaa or min(
+            if not maqaa or min(
                 baajata, meeshaa, hojjetaa, biroo
-            ) < 0):
+            ) < 0:
                 raise ValueError
 
             baasii = meeshaa + hojjetaa + biroo
@@ -123,9 +137,12 @@ baajata = float(request.form["baajata"])
                 "baasii": baasii,
                 "hafe": baajata - baasii
             }
+
         except (ValueError, TypeError):
             return "Maaloo odeeffannoo sirrii galchi.", 400
 
     return render_template_string(HTML, buaan=buaan)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
